@@ -1,0 +1,45 @@
+{
+  "temporada": 1,
+  "capitulo": 1,
+  "titulo": "La primera apuesta del oso",
+  "escenario": "Taberna del Bosque",
+  "resumen": "El Oso Vicioso descubre su pasión por las apuestas en una animada taberna donde conoce a sus futuros rivales y aliados. Comienza inocente y confiado, pero pronto aprende que no todo es tan fácil en el juego.",
+  "personajes": {
+    "Oso": {
+      "estado_emocional": "entusiasta e ingenuo",
+      "arco": "Inocencia perdida",
+      "relaciones_clave": ["Zorro (rival)", "Búho (mentor)"],
+      "objetivo": "Ganar su primera apuesta y demostrar que es un jugador habilidoso"
+    },
+    "Zorro": {
+      "estado_emocional": "escéptico y astuto",
+      "arco": "Rivalidad inicial",
+      "relaciones_clave": ["Oso (competidor)"],
+      "objetivo": "Mantener su supremacía en la taberna y no dejar que Oso lo supere"
+    },
+    "Búho": {
+      "estado_emocional": "sabio y observador",
+      "arco": "Mentor",
+      "relaciones_clave": ["Oso (aprendiz)"],
+      "objetivo": "Enseñar al Oso las reglas del juego y la importancia de la honestidad"
+    }
+  },
+  "conflicto": "El Oso apuesta sin conocer bien las reglas y casi pierde todo, lo que despierta la atención del Zorro y la ayuda del Búho.",
+  "actos": [
+    {
+      "nombre": "Presentación",
+      "contenido": "El Oso llega a la taberna, conoce a los otros jugadores y siente la emoción de apostar por primera vez."
+    },
+    {
+      "nombre": "Conflicto",
+      "contenido": "El Oso apuesta impulsivamente y pierde, lo que provoca la burla del Zorro y la intervención del Búho."
+    },
+    {
+      "nombre": "Resolución",
+      "contenido": "El Búho aconseja al Oso aprender antes de apostar y le ofrece ayudarlo a mejorar."
+    }
+  ],
+  "moraleja": "La paciencia y el aprendizaje son clave antes de lanzarse a cualquier aventura.",
+  "tono": "Cómico absurdo",
+  "transicion_next": "El Oso decide entrenar y prepararse para la próxima apuesta."
+}
