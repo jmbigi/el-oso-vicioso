@@ -26,3 +26,15 @@
    ```bash
    git clone https://github.com/jmbigi/el-oso-vicioso.git
    cd el-oso-vicioso
+   ```
+
+---
+
+## 📄 Estructura de config.json
+
+- `temporadas`: Número de temporadas (int, requerido)
+- `capitulos_por_temporada`: Número de capítulos por temporada (int, requerido)
+- `idioma`: Idioma principal (string, requerido)
+- `modelo_guion`: Modelo de IA para guiones (string, opcional)
+- `modelo_voz`: Modelo de voz (string, opcional)
+- `modelo_imagen`: Modelo de imagen (string, opcional)

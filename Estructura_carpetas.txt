@@ -1,6 +1,6 @@
 el-oso-vicioso/
-├── Temporada_1/
-│   └── Capitulo_1/
+├── temporada_1/
+│   └── capitulo_1/
 │       ├── meta.json          <-- Aquí va el JSON que te di
 │       ├── dialogos/          <-- Audios de los personajes (.wav)
 │       ├── imagenes/          <-- Imágenes del storyboard o personajes (.png, .jpg)

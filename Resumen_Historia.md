@@ -6,7 +6,7 @@
 
 | Capítulo | Resumen breve                                                          | Estado de Personajes                                                       |
 | -------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| 1        | Oso Vicioso hace su primera apuesta en la taberna con Zorro.           | Oso: entusiasmado, confiado.<br>Zorro: escéptico, tramposo.                |
+| 1        | [Oso Vicioso hace su primera apuesta en la taberna con Zorro.](../Temporada_1/Capitulo_1/meta.json) | Oso: entusiasmado, confiado.<br>Zorro: escéptico, tramposo.                |
 | 2        | Oso pierde una apuesta y sufre su primera derrota dolorosa.            | Oso: frustrado, más cauteloso.<br>Zorro: confiado, burlón.                 |
 | 3        | Oso intenta engañar pero Búho sabio lo descubre y lo regaña.           | Oso: arrepentido, nervioso.<br>Búho: serio, mentor.                        |
 | 4        | Aparece Serpiente que propone una apuesta doble o nada.                | Oso: temeroso pero ambicioso.<br>Serpiente: misteriosa, astuta.            |
