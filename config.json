@@ -1,0 +1,12 @@
+{
+  "modelo_texto": "phi3",
+  "modelo_voz": "xtts_v2",
+  "resolucion": "512x512",
+  "estilo_imagen": "anime",
+  "personajes": {
+    "oso": {
+      "voz": "assets/voces/oso_ref.wav",
+      "emociones": ["eufórico", "triste"]
+    }
+  }
+}
