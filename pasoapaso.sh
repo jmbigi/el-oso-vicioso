@@ -111,7 +111,7 @@ tail -f registro.log
 # ---------------------------------------------------
 
 # Estructura generada
-ls -R Temporada_1/Capitulo_1/
+ls -R temporada_1/capitulo_1/
 
 # Reproducir vídeo short
-ffplay Temporada_1/Capitulo_1/video_short.mp4
+ffplay temporada_1/capitulo_1/video_short.mp4

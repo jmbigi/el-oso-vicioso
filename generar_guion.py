@@ -6,7 +6,7 @@ def cargar_guion(temporada, capitulo):
     """
     Carga el guion de un capítulo específico.
     """
-    ruta = f"Temporada_{temporada}/Capitulo_{capitulo}/meta.json"
+    ruta = f"temporada_{temporada}/capitulo_{capitulo}/meta.json"
     if not os.path.exists(ruta):
         raise FileNotFoundError(f"No se encontró el archivo: {ruta}")
     with open(ruta, "r", encoding="utf-8") as f:
