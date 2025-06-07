@@ -103,6 +103,13 @@ else
     echo "⚠️ No se encontró '$WAV_FILE', saltando síntesis con voz propia."
 fi
 
+# Síntesis con XTTS_V2 (voz propia, sin idioma explícito)
+synthesize "tts_models/en/ek1/tacotron2" \
+    "Hello, this is a test using the WaveGrad vocoder." \
+    "prueba_wavegrad.wav" "" \
+    --vocoder_name "vocoder_models/en/ek1/wavegrad"
+
+
 # Voces masculinas españolas preentrenadas
 synthesize "tts_models/es/css10/vits" \
     "Hola, esta es la voz masculina española CSS10." \
