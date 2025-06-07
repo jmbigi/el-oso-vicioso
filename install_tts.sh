@@ -4,7 +4,7 @@ set -x
 
 # Variables configurables
 PYTHON_VERSION="3.10"
-WAV_FILE="./mi_voz.wav"
+WAV_FILE="./voz_latina.wav"
 VENV_DIR="venv"
 TORCH_VERSION="2.1.2"
 AUDIO_VERSION="2.1.2"
@@ -94,14 +94,25 @@ function synthesize() {
     fi
 }
 
-# Síntesis con XTTS_V2 (voz propia, español latino, vocoder WaveGrad universal)
-if [ -f "$WAV_FILE" ]; then
-    synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-        "Hola mundo, esta es una prueba en español latinoamericano con vos propia y vosoder WaveGrad." \
-        "prueba_xtts_wavegrad_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
-else
-    echo "⚠️ No se encontró '$WAV_FILE', saltando síntesis con voz propia."
-fi
+# Sintetizar con vocoder WaveGrad (universal, ya incluido en tu script)
+synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+    "Hola, esta es una voz latina con vocoder WaveGrad universal." \
+    "prueba_xtts_wavegrad_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
+
+# Sintetizar con vocoder HiFi-GAN universal
+synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+    "Hola, esta es una voz latina con vocoder HiFi-GAN universal." \
+    "prueba_xtts_hifigan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/hifigan"
+
+# Sintetizar con vocoder MelGAN universal
+synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+    "Hola, esta es una voz latina con vocoder MelGAN universal." \
+    "prueba_xtts_melgan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/melgan"
+
+# Sintetizar con vocoder Multi-band MelGAN universal
+synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+    "Hola, esta es una voz latina con vocoder Multi-band MelGAN universal." \
+    "prueba_xtts_multibandmelgan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/multiband-melgan"
 
 # Voces masculinas españolas preentrenadas
 synthesize "tts_models/es/css10/vits" \
