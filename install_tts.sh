@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 # Variables configurables
 PYTHON_VERSION="3.10"
@@ -66,26 +67,54 @@ if [ ! -f "$WAV_FILE" ]; then
     echo "❌ No se encontró el archivo de referencia '$WAV_FILE'."
     echo "✅ Por favor graba un archivo de voz de ~3 segundos y guárdalo como '$WAV_FILE' en el directorio."
     echo "   Ejemplo: arecord -d 3 -f cd -r 22050 $WAV_FILE"
-    exit 1
 fi
 
-# Realizar síntesis con diferentes modelos
+# Función para ejecutar síntesis
+function synthesize() {
+    local model_name="$1"
+    local text="$2"
+    local out_path="$3"
+    local speaker_wav="$4"
+    shift 4
+    local extra_args=("$@")
 
-echo "▶ Ejecutando síntesis con XTTS_V2 (voz propia)..."
-tts --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
-    --text "Hola mundo, esta es una prueba de síntesis con la voz por defecto." \
-    --speaker_wav "$WAV_FILE" \
-    --language_idx "es" \
-    --out_path prueba_xtts_es.wav
+    echo "▶ Sintetizando con modelo: $model_name"
 
-# Prueba con voz masculina preentrenada sin errores
-echo "▶ Prueba con voz masculina española CSS10..."
-tts --model_name tts_models/es/css10/vits \
-    --text "Hola, esta es la voz masculina española CSS10." \
-    --out_path prueba_css10_masc.wav
+    if [ -n "$speaker_wav" ] && [ -f "$speaker_wav" ]; then
+        tts --model_name "$model_name" \
+            --text "$text" \
+            --speaker_wav "$speaker_wav" \
+            --out_path "$out_path" \
+            "${extra_args[@]}"
+    else
+        tts --model_name "$model_name" \
+            --text "$text" \
+            --out_path "$out_path" \
+            "${extra_args[@]}"
+    fi
+}
 
-# Prueba con voz masculina italiana MAI
-echo "▶ Prueba con voz masculina italiana MAI Male..."
-tts --model_name tts_models/it/mai_male/vits \
-    --text "Hola, esta es una voz masculina italiana proveniente del modelo MAI Male." \
-    --out_path prueba_mai_masc.wav
+# Síntesis con XTTS_V2 (voz propia, idioma explícito)
+if [ -f "$WAV_FILE" ]; then
+    synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+        "Hola mundo, esta es una prueba de síntesis con la voz grabada." \
+        "prueba_xtts_es.wav" "$WAV_FILE" --language_idx "es"
+else
+    echo "⚠️ No se encontró '$WAV_FILE', saltando síntesis con voz propia."
+fi
+
+# Voces masculinas españolas preentrenadas
+synthesize "tts_models/es/css10/vits" \
+    "Hola, esta es la voz masculina española CSS10." \
+    "prueba_css10_masc.wav" ""
+
+synthesize "tts_models/es/mai/tacotron2-DDC" \
+    "Hola, esta es la voz femenina española MAI tacotron2." \
+    "prueba_mai_tacotron2_fem.wav" ""
+
+# Voz masculina italiana MAI
+synthesize "tts_models/it/mai_male/vits" \
+    "Hola, esta es una voz masculina italiana proveniente del modelo MAI Male." \
+    "prueba_mai_masc.wav" ""
+
+echo "✅ Todas las síntesis han finalizado."
