@@ -97,7 +97,7 @@ function synthesize() {
 # Síntesis con XTTS_V2 (voz propia, español latino, vocoder WaveGrad universal)
 if [ -f "$WAV_FILE" ]; then
     synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-        "Hola mundo, esta es una prueba en español latinoamericano con voz propia y vocoder WaveGrad." \
+        "Hola mundo, esta es una prueba en español latinoamericano con vos propia y vosoder WaveGrad." \
         "prueba_xtts_wavegrad_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
 else
     echo "⚠️ No se encontró '$WAV_FILE', saltando síntesis con voz propia."
