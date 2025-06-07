@@ -1,135 +1,79 @@
 #!/bin/bash
 
-OUTPUT="grabacion_salida.wav"
-DURACION=$1
+systemctl --user restart pipewire pipewire-pulse
+#hacer pausa para que se reinicie
+sleep 2
 
-echo "=== 🎧 Iniciando grabación de salida de audio del sistema ==="
+set -euo pipefail
 
-# Función para diagnóstico de problemas
-diagnosticar_problemas() {
-    echo -e "\n=== 🛠️ Diagnóstico de problemas ==="
-
-    echo -e "\n🔍 Dispositivos de tipo monitor detectados:"
-    local devices=$(pactl list sources short | grep -i monitor)
-    if [ -z "$devices" ]; then
-        echo "❌ No se encontraron dispositivos monitor."
-        echo "   Posibles causas:"
-        echo "   - No hay audio en reproducción"
-        echo "   - PipeWire o PulseAudio no está funcionando"
-    else
-        echo "$devices"
-    fi
-
-    echo -e "\n🔍 Permisos de audio:"
-    if groups | grep -q -E 'audio|pipewire'; then
-        echo "✅ Usuario tiene permisos adecuados de audio"
-    else
-        echo "❌ Usuario SIN permisos de audio."
-        echo "   ➤ Solución recomendada:"
-        echo "     sudo usermod -aG audio,pipewire $USER"
-        echo "     (Requiere cerrar y volver a iniciar sesión)"
-    fi
-
-    echo -e "\n🔍 Estado del servidor de audio (PipeWire/PulseAudio):"
-    if pactl info | grep -q "PipeWire"; then
-        echo "✅ PipeWire está activo"
-    else
-        echo "❌ PipeWire NO está corriendo."
-        echo "   ➤ Solución recomendada:"
-        echo "     systemctl --user restart pipewire pipewire-pulse"
-    fi
-
-    if [ -n "$DEVICE" ]; then
-        echo -e "\n🔍 Estado del dispositivo seleccionado ($DEVICE):"
-        if pactl list sources | grep -A10 "$DEVICE" | grep -q "Suspended: yes"; then
-            echo "❌ Dispositivo suspendido."
-            echo "   ➤ Solución:"
-            echo "     pactl suspend-source $DEVICE 0"
-        else
-            echo "✅ Dispositivo activo"
-        fi
-    fi
-
-    echo -e "\n=== 🔚 Fin del diagnóstico ===\n"
+# Función para mostrar error y salir
+error_exit() {
+  echo "Error: $1" >&2
+  exit 1
 }
 
-# Despierta el audio para prevenir "suspend"
-despertar_dispositivo() {
-    echo "🌐 Activando dispositivo de audio (evitando suspensión)..."
-    timeout 0.3 pw-play /dev/zero 2>/dev/null || true
-}
-
-# Función principal
-grabar_pipewire() {
-    echo -e "\n🔍 Buscando dispositivos tipo monitor..."
-
-    # Selecciona el primer dispositivo tipo monitor disponible
-    DEVICE=$(pactl list sources short | grep -i monitor | head -n1 | awk '{print $2}')
-
-    if [ -z "$DEVICE" ]; then
-        echo "❌ No se encontró ningún dispositivo tipo monitor."
-        diagnosticar_problemas
-        exit 1
-    fi
-
-    echo "✔ Dispositivo seleccionado para grabación: $DEVICE"
-    echo -e "\n📋 Lista completa de dispositivos monitor disponibles:"
-    pactl list sources short | grep -i monitor
-
-    despertar_dispositivo
-
-    echo -e "\n📟 Estado del dispositivo:"
-    pactl list sources | grep -A10 "$DEVICE" | grep -E "Name:|Description:|State:|Sample Specification:"
-
-    # Parámetros
-    FORMATO_PW=s32
-    FORMATO_FF=s32le
-    RATE=48000
-    CHANNELS=2
-
-    echo -e "\n⚙️ Configuración de grabación:"
-    echo "  🎚️ Formato: $FORMATO_PW"
-    echo "  🕒 Tasa de muestreo: $RATE Hz"
-    echo "  🎛️ Canales: $CHANNELS"
-    echo "  ⏳ Duración: ${DURACION:-'ilimitada (Ctrl+C para detener)'}"
-
-    echo -e "\n🎤 Grabando..."
-
-    if [ -z "$DURACION" ]; then
-        pw-record --target="$DEVICE" --format=$FORMATO_PW --rate=$RATE --channels=$CHANNELS - | \
-        ffmpeg -y -f $FORMATO_FF -ar $RATE -ac $CHANNELS -i - "$OUTPUT"
-    else
-        timeout "${DURACION}s" bash -c \
-        "pw-record --target='$DEVICE' --format=$FORMATO_PW --rate=$RATE --channels=$CHANNELS - | \
-         ffmpeg -y -f $FORMATO_FF -ar $RATE -ac $CHANNELS -i - '$OUTPUT'"
-    fi
-
-    # Revisión del archivo generado
-    if [ -s "$OUTPUT" ]; then
-        DURACION_REAL=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$OUTPUT" | awk '{printf "%.1f", $1}')
-        echo -e "\n✅ Grabación completada:"
-        echo "  📁 Archivo: $OUTPUT"
-        echo "  📦 Tamaño: $(du -h "$OUTPUT" | cut -f1)"
-        echo "  🕒 Duración real: $DURACION_REAL segundos"
-
-        SILENCIO=$(ffmpeg -i "$OUTPUT" -af silencedetect=noise=-30dB:d=0.5 -f null - 2>&1 | grep "silence_")
-        if [ -n "$SILENCIO" ]; then
-            echo -e "\n⚠️  Se detectaron periodos de silencio:"
-            echo "$SILENCIO" | while read -r line; do echo "  $line"; done
-        fi
-    else
-        echo -e "\n❌ Error: La grabación resultó en un archivo vacío."
-        diagnosticar_problemas
-        exit 1
-    fi
-}
-
-# Validación de conexión a PipeWire
-if ! pactl info &>/dev/null; then
-    echo "❌ No se puede conectar a PipeWire/PulseAudio."
-    echo "   ➤ Intente ejecutar:"
-    echo "     systemctl --user restart pipewire pipewire-pulse"
-    exit 1
+# Verificar que ffmpeg esté instalado
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  error_exit "ffmpeg no está instalado. Instálalo con 'sudo apt install ffmpeg'"
 fi
 
-grabar_pipewire
+# Verificar que pactl esté instalado
+if ! command -v pactl >/dev/null 2>&1; then
+  error_exit "pactl no está instalado. Instálalo con 'sudo apt install pulseaudio-utils'"
+fi
+
+# Validar duración (si se pasa)
+DURACION=${1:-}
+if [ -n "$DURACION" ]; then
+  if ! [[ "$DURACION" =~ ^[0-9]+$ ]]; then
+    error_exit "Duración debe ser un número entero positivo."
+  fi
+fi
+
+echo "Buscando dispositivo monitor de PulseAudio para grabar..."
+
+# Buscar dispositivo monitor (audio que sale del sistema)
+DEVICE=$(pactl list short sources | grep -i monitor | head -n1 | awk '{print $2}' || true)
+
+if [ -z "$DEVICE" ]; then
+  echo "No se encontró dispositivo monitor para grabar. Listado de dispositivos disponibles:"
+  pactl list short sources
+  error_exit "No se pudo detectar dispositivo monitor para grabar audio."
+fi
+
+echo "Dispositivo monitor detectado: $DEVICE"
+
+OUTPUT="grabacion_salida.wav"
+rm -f "$OUTPUT"  # Eliminar archivo previo si existe
+
+echo "Esperando 5 segundos antes de iniciar la grabación..."
+sleep 5
+echo "Iniciando grabación en 1 segundo..."
+sleep 1
+
+# Capturar CTRL+C para limpiar
+trap 'echo -e "\nGrabación interrumpida por usuario."; exit 130' INT TERM
+
+echo "Iniciando grabación en $OUTPUT desde dispositivo $DEVICE ..."
+
+# Intentar ejecutar ffmpeg con un timeout (solo si DURACION está seteado)
+# Para mejorar info, capturamos errores y mostramos mensaje amigable
+if [ -z "$DURACION" ]; then
+  ffmpeg -hide_banner -loglevel info -f pulse -i "$DEVICE" "$OUTPUT"
+else
+  ffmpeg -hide_banner -loglevel info -f pulse -i "$DEVICE" -t "$DURACION" "$OUTPUT"
+fi
+
+# Verificar que el archivo se creó y tiene contenido
+if [ -f "$OUTPUT" ]; then
+  FILESIZE=$(stat --format=%s "$OUTPUT")
+  if [ "$FILESIZE" -gt 0 ]; then
+    echo "Grabación finalizada correctamente: $OUTPUT (tamaño: $FILESIZE bytes)"
+  else
+    echo "Advertencia: El archivo $OUTPUT fue creado pero está vacío."
+  fi
+else
+  echo "Error: No se creó el archivo de grabación."
+fi
+
+exit 0
