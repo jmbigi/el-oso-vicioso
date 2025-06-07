@@ -94,21 +94,14 @@ function synthesize() {
     fi
 }
 
-# Síntesis con XTTS_V2 (voz propia, idioma explícito)
+# Síntesis con XTTS_V2 (voz propia, español latino, vocoder WaveGrad universal)
 if [ -f "$WAV_FILE" ]; then
     synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-        "Hola mundo, esta es una prueba de síntesis con la voz grabada." \
-        "prueba_xtts_es.wav" "$WAV_FILE" --language_idx "es"
+        "Hola mundo, esta es una prueba en español latinoamericano con voz propia y vocoder WaveGrad." \
+        "prueba_xtts_wavegrad_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
 else
     echo "⚠️ No se encontró '$WAV_FILE', saltando síntesis con voz propia."
 fi
-
-# Síntesis con XTTS_V2 (voz propia, sin idioma explícito)
-synthesize "tts_models/en/ek1/tacotron2" \
-    "Hello, this is a test using the WaveGrad vocoder." \
-    "prueba_wavegrad.wav" "" \
-    --vocoder_name "vocoder_models/en/ek1/wavegrad"
-
 
 # Voces masculinas españolas preentrenadas
 synthesize "tts_models/es/css10/vits" \
