@@ -4,7 +4,8 @@ set -x
 
 # Variables configurables
 PYTHON_VERSION="3.10"
-WAV_FILE="./voz_latina.wav"
+WAV_FILE="./voz_lat_masc.wav"
+WAV_FILE_FEM="./voz_lat_fem.wav"
 VENV_DIR="venv"
 TORCH_VERSION="2.1.2"
 AUDIO_VERSION="2.1.2"
@@ -94,36 +95,35 @@ function synthesize() {
     fi
 }
 
-# Sintetizar con vocoder WaveGrad (universal, ya incluido en tu script)
 synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-    "Hola, esta es una voz latina con vocoder WaveGrad universal." \
-    "prueba_xtts_wavegrad_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
+    "Esta es la voz latina generada con el vocoder WaveGrad universal." \
+    "prueba_xtts_wavegrad_lat.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/wavegrad"
 
-# Sintetizar con vocoder HiFi-GAN universal
 synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-    "Hola, esta es una voz latina con vocoder HiFi-GAN universal." \
-    "prueba_xtts_hifigan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/hifigan"
+    "Esta es la voz latina generada con el vocoder HiFi-GAN universal." \
+    "prueba_xtts_hifigan_lat.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/hifigan"
 
-# Sintetizar con vocoder MelGAN universal
 synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-    "Hola, esta es una voz latina con vocoder MelGAN universal." \
-    "prueba_xtts_melgan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/melgan"
+    "Esta es la voz latina generada con el vocoder MelGAN universal." \
+    "prueba_xtts_melgan_lat.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/melgan"
 
-# Sintetizar con vocoder Multi-band MelGAN universal
 synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
-    "Hola, esta es una voz latina con vocoder Multi-band MelGAN universal." \
-    "prueba_xtts_multibandmelgan_latam.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/multiband-melgan"
+    "Esta es la voz latina generada con el vocoder Multi-band MelGAN universal." \
+    "prueba_xtts_multibandmelgan_lat.wav" "$WAV_FILE" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/multiband-melgan"
+
+synthesize "tts_models/multilingual/multi-dataset/xtts_v2" \
+    "Esta es la voz latina femenina generada con el vocoder HiFi-GAN universal." \
+    "prueba_xtts_hifigan_lat_fem.wav" "$WAV_FILE_FEM" --language_idx "es" --vocoder_name "vocoder_models/universal/libri-tts/hifigan"
 
 # Voces masculinas españolas preentrenadas
 synthesize "tts_models/es/css10/vits" \
-    "Hola, esta es la voz masculina española CSS10." \
+    "Hola, esta es la voz masculina española." \
     "prueba_css10_masc.wav" ""
 
 synthesize "tts_models/es/mai/tacotron2-DDC" \
-    "Hola, esta es la voz femenina española MAI tacotron2." \
+    "Hola, esta es la voz femenina española MAI tacotron2" \
     "prueba_mai_tacotron2_fem.wav" ""
 
-# Voz masculina italiana MAI
 synthesize "tts_models/it/mai_male/vits" \
     "Hola, esta es una voz masculina italiana proveniente del modelo MAI Male." \
     "prueba_mai_masc.wav" ""
